@@ -1,56 +1,45 @@
-import { useState } from 'react';
+import React,{useState} from "react";
 
-function NewTaskForm({ categories, onTaskFormSubmit }) {
-  const [text, setText] = useState('');
-  const [category, setCategory] = useState(categories[0]);
-
-  const handleTextChange = (event) => {
-    setText(event.target.value);
-  };
-
-  const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const newTask = { text, category };
-    onTaskFormSubmit(newTask);
-    setText('');
-    setCategory(categories[0]);
-  };
-
-  const categoryOptions = categories
-    .filter((category) => category !== 'All')
-    .map((category) => (
-      <option key={category} value={category}>
-        {category}
-      </option>
-    ));
-
+function NewTaskForm({onTaskFormSubmit,categories}) {
+  
+  const [newItemFields, setNewItemFields]=useState({
+    text:'',
+    category:'Code'
+  })
+ 
+  function handleFields(e){
+    const{name,value}=e.target
+    setNewItemFields({...newItemFields,[name]:value})
+    
+  }
+  // console.log(newItemFields)
+  
+  
   return (
-    <form onSubmit={handleSubmit} className="new-task-form">
-      <label htmlFor="text-input">Task:</label>
-      <input
-        id="text-input"
-        type="text"
-        value={text}
-        onChange={handleTextChange}
-        required
-      />
+    <form
+    onSubmit={(e)=>{
+      e.preventDefault()
+      onTaskFormSubmit(newItemFields)}}
+    className="new-task-form"
+    >
+      <label>
+        Details
+        <input value={newItemFields.text} onChange={handleFields}  type="text" name="text" />
+      </label>
 
-      <label htmlFor="category-select">Category:</label>
-      <select
-        id="category-select"
-        value={category}
-        onChange={handleCategoryChange}
-        required
-      >
-        {categoryOptions}
-      </select>
+      <label>
+        Category
+        <select value={newItemFields.category} onChange={handleFields} name="category">
+          {/* render <option> elements for each category here */}
+          {categories.map((category,index)=>(
+            <option key={index}>{category}</option>
+          ))}
+        </select>
+      </label>
 
-      <button type="submit">Add Task</button>
+      <input type="submit" value="Add task" />
     </form>
   );
 }
-export default NewTaskForm
+
+export default NewTaskForm;

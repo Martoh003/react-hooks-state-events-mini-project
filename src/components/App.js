@@ -1,44 +1,51 @@
-import React, { useState } from "react";
-import "../index.css";
+import React,{useState} from "react";
 import CategoryFilter from "./CategoryFilter";
-import TaskList from "./TaskList";
 import NewTaskForm from "./NewTaskForm";
-import { TASKS, CATEGORIES } from "../data";
-const App = () => {
-  const [tasks, setTasks] = useState(TASKS);
-  const [categories, setCategories] = useState(CATEGORIES);
-  const [selectedCategory, setSelectedCategory] = useState("All");
+import TaskList from "./TaskList";
+import { CATEGORIES, TASKS } from "../data";
 
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    
-  };
+function App() {
+  const [task, setTask] = useState(TASKS)
+  const [categories, setCategories] = useState(CATEGORIES)
+  const [selectedCategoryButton, setSelectedCategoryButton] = useState('All')
+  
+  
 
-  const handleTaskFormSubmit = (newTask) => {
-    setTasks([...tasks, newTask]);
-  };
+  function addNewItemtoList(newItem){
+    setTask([...task,newItem])
+  }
 
-  const filteredTasks =
-    selectedCategory === "All"
-      ? tasks
-      : tasks.filter((task) => task.category === selectedCategory);
+  function deletedItem(deletedItem){
+    setTask(task.filter((item)=>item.text !== deletedItem))
+  }
+ 
+
+  const itemDisplayed = task
+
+  .filter(
+    (item)=>{ 
+    if(selectedCategoryButton==='All') return true
+    return selectedCategoryButton === item.category
+   } 
+   )      
 
   return (
     <div className="App">
-      
       <h2>My tasks</h2>
       <CategoryFilter
         categories={categories}
-        selectedCategory={selectedCategory}
-        onCategorySelect={handleCategorySelect}
+        onButton={selectedCategoryButton}
+        selectedButton={setSelectedCategoryButton} 
       />
       <NewTaskForm
+        onTaskFormSubmit={addNewItemtoList}
         categories={categories}
-        onTaskFormSubmit={handleTaskFormSubmit}
       />
-      <TaskList tasks={filteredTasks} onTaskDelete={setTasks} />
+      <TaskList 
+        deletedItem={deletedItem}
+        tasks={itemDisplayed} />
     </div>
   );
-};
+}
 
 export default App;
